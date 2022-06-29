@@ -1,0 +1,6 @@
+**/.vscode
+**/*.cache
+**/obj
+**/.vs
+**/bin
+/WarehouseApp/warehouse.json
