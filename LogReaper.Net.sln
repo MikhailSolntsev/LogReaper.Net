@@ -5,6 +5,8 @@ VisualStudioVersion = 17.2.32519.379
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogReaper.Net", "LogReaper.Net\LogReaper.Net.csproj", "{00A384C3-6E06-41C1-9999-5D63E87BC447}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogReaper.Net.Tests", "LogReaper.Net.Tests\LogReaper.Net.Tests.csproj", "{4C3B2C80-BF06-4F17-B86A-3DD6D5D9C6D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{00A384C3-6E06-41C1-9999-5D63E87BC447}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00A384C3-6E06-41C1-9999-5D63E87BC447}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00A384C3-6E06-41C1-9999-5D63E87BC447}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C3B2C80-BF06-4F17-B86A-3DD6D5D9C6D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C3B2C80-BF06-4F17-B86A-3DD6D5D9C6D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C3B2C80-BF06-4F17-B86A-3DD6D5D9C6D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C3B2C80-BF06-4F17-B86A-3DD6D5D9C6D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

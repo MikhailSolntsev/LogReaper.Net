@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LogReaper.Net.Models;
 
-namespace LogReaper.Net.Models;
+namespace LogReaper.Net;
 
-public static class ModelExtensions
+public static class Extensions
 {
     public static ElkRecord ToElkRecord(this LogRecord record, LogDictionary dictionary) =>
         new()
@@ -42,6 +38,27 @@ public static class ModelExtensions
     }
 
     public static string ToPeriod(this string source) =>
-        source.Substring(0, 10).Replace('-', '.');
-    
+        source[..Math.Min(10, source.Length)].Replace('-', '.');
+
+    public static string CutQuotes(this string source)
+    {
+        if (string.IsNullOrEmpty(source))
+        {
+            return source;
+        }
+
+        var result = source;
+
+        if (result.StartsWith('"'))
+        {
+            result = source[1..];
+        }
+
+        if (result.EndsWith('"'))
+        {
+            result = result[..^1];
+        }
+
+        return result;
+    }
 }
