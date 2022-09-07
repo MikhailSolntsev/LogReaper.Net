@@ -1,7 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
-using System.IO;
+﻿
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace LogReaper.Net;
 

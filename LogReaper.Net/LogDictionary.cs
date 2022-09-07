@@ -1,4 +1,5 @@
-﻿using LogReaper.Net.Models;
+﻿
+using LogReaper.Net.Models;
 using System.Text;
 
 namespace LogReaper.Net;

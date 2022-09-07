@@ -1,9 +1,4 @@
 ﻿
-using System.IO;
-using System;
-using static System.Net.WebRequestMethods;
-using System.Net.Sockets;
-
 namespace LogReaper.Net;
 
 public static class FileHelper
