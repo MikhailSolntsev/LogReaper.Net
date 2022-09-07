@@ -6,7 +6,7 @@ public class BaseList
 {
     private readonly IList<BaseListRecord> bases = new List<BaseListRecord>();
 
-    private string ReadBasesRaw(string fileName)
+    private static string ReadBasesRaw(string fileName)
     {
         var fileStream = File.OpenRead(fileName);
         var fileReader = new StreamReader(fileStream);
@@ -27,7 +27,7 @@ public class BaseList
         return basesRaw;
     }
 
-    private List<string> GetBasesRawList(string basesRaw)
+    private static List<string> GetBasesRawList(string basesRaw)
     {
         var reader = new StringReader(basesRaw);
         var readMachine = new ReadMachine(reader);
@@ -52,7 +52,7 @@ public class BaseList
         return rawList;
     }
 
-    private BaseListRecord ProcessRawBase(string rawBase)
+    private static BaseListRecord ProcessRawBase(string rawBase)
     {
         var reader = new StringReader(rawBase);
         var readMachine = new ReadMachine(reader);
@@ -79,8 +79,10 @@ public class BaseList
         var basesRaw = ReadBasesRaw(fileName);
         var basesRawList = GetBasesRawList(basesRaw);
 
-
-        basesRawList.Select(r => { bases.Add(ProcessRawBase(r)); return r; });
+        foreach (string record in basesRawList)
+        {
+            bases.Add(ProcessRawBase(record));
+        }
     }
 
 }

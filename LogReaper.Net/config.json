@@ -1,0 +1,7 @@
+{
+  "Bases": [ "" ],
+  "LogDirectory": "",
+  "BackupDirectory": "",
+  "ElkUrl": "",
+  "BulkSize":  50
+}

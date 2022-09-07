@@ -105,4 +105,5 @@ public class LogDictionary
 
         return builder.ToString();
     }
+
 }
