@@ -1,4 +1,6 @@
 ﻿
+using LogReaper.Net.Exceptions;
+
 namespace LogReaper.Net;
 
 public static class FileHelper
@@ -50,7 +52,7 @@ public static class FileHelper
             dir.Create();
             if (!dir.Exists)
             {
-                throw new FileNotFoundException($"Не удалось создать каталог \"{directory}\"");
+                throw new DirectoryCreationException($"Не удалось создать каталог \"{directory}\"");
             }
         }
 
@@ -60,7 +62,7 @@ public static class FileHelper
         var dest = new FileInfo(newFileName);
         if (!dest.Exists)
         {
-            throw new FileNotFoundException($"Ошибка перемещения файла в \"{newFileName}\"");
+            throw new FileRenameException($"Ошибка перемещения файла в \"{newFileName}\"");
         }
     }
 }

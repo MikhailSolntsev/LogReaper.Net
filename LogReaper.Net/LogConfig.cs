@@ -11,6 +11,11 @@ public class LogConfig
     public string ElkUrl { get; set; }
     public int BulkSize { get; set; }
 
+    public LogConfig(string directory)
+    {
+        LogDirectory = directory;
+    }
+
     public static LogConfig ReadConfig(string directory)
     {
         string fileName = Path.Combine(directory, "config.json");

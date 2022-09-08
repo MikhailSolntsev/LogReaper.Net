@@ -1,0 +1,73 @@
+{
+  "events": {
+    "_$Access$_.AccessDenied": "Доступ. Отказ в доступе",
+    "_$Session$_.Start": "Сеанс. Начало",
+    "_$Session$_.Authentication": "Сеанс. Аутентификация",
+    "_$Session$_.Finish": "Сеанс. Завершение",
+    "_$Session$_.AuthenticationError": "Сеанс. Ошибка аутентификации",
+    "_$Session$_.ConfigExtensionApplyError": "Сеанс. Ошибка применения расширения конфигурации",
+
+    "_$Transaction$_.Begin": "Начало транзакции",
+    "_$Transaction$_.Commit": "Конец транзакции",
+    "_$Transaction$_.Rollback": "Отмена транзакции",
+
+    "_$Data$_.New": "Данные. Добавление",
+    "_$Data$_.Post": "Данные. Проведение",
+    "_$Data$_.Unpost": "Данные. Отмена проведения",
+    "_$Data$_.Delete": "Данные. Удаление",
+    "_$Data$_.Update": "Данные. Изменение",
+    "_$Data$_.UpdatePredefinedData": "Данные. Изменение предопределенных данных",
+    "_$Data$_.NewPredefinedData": "Данные. Добавление предопределенных данных",
+    "_$Data$_.PredefinedDataInitialization": "Данные. Инициализация предопределенных данных",
+
+    "_$Job$_.Start": "Фоновое задание. Запуск",
+    "_$Job$_.Succeed": "Фоновое задание. Успешное завершение",
+    "_$Job$_.Fail": "Фоновое задание. Ошибка выполнения",
+    "_$Job$_.Cancel": "Фоновое задание. Отмена",
+
+    "_$InfoBase$_.EventLogSettingsUpdate": "Информационная база. Изменение настроек журнала регистрации",
+    "_$InfoBase$_.PredefinedDataUpdate": "Информационная база. Обновление предопределенных данных",
+    "_$InfoBase$_.DBConfigUpdate": "Информационная база. Изменение конфигурации базы данных",
+    "_$InfoBase$_.ConfigUpdate": "Информационная база. Изменение конфигурации",
+    "_$InfoBase$_.DBConfigUpdateError": "Информационная база. Ошибка изменения конфигурации базы данных",
+    "_$InfoBase$_.Succeed": "Информационная база. Успешно",
+    "_$InfoBase$_.ConfigExtensionUpdate": "Информационная база. Изменение расширения конфигурации",
+    "_$InfoBase$_.DBConfigExtensionUpdate": "Информационная база. Изменение расширения конфигурации базы данных",
+    "_$InfoBase$_.TARInfo": "Тестирование и исправление. Сообщение",
+    "_$InfoBase$_.DBConfigUpdateStart": "Информационная база. Запуск обновления конфигурации базы данных",
+
+    "_$User$_.New,": "Пользователь. Добавление",
+    "_$User$_.NewError,": "Пользователь. Ошибка добавления",
+    "_$User$_.Update,": "Пользователь. Изменение",
+    "_$User$_.Delete,": "Пользователь. Удаление",
+
+    "_$PerformError$_": "Ошибка выполнения"
+  },
+
+  "levels": {
+    "I": "Information",
+    "E": "Error",
+    "W": "Warning",
+    "N": "Trace"
+  },
+
+  "applications": {
+    "1CV8C": "Тонкий клиент",
+    "BackgroundJob": "Фоновое задание",
+    "Designer": "Конфигуратор",
+    "HTTPServiceConnection": "Cоединение c HTTP-сервисом",
+    "JobScheduler": "Планировщик заданий",
+    "WSConnection": "WS-соединение",
+    "SrvrConsole": "Консоль кластера",
+    "1CV8": "Толстый клиент",
+    "COMConnection": "COM-соединение",
+    "ras":  "RAS служба"
+  },
+
+  "transactionStatuses": {
+    "N": "Отсутствует",
+    "U": "Зафиксирована",
+    "R": "Не завершена",
+    "C": "Отменена"
+  }
+}

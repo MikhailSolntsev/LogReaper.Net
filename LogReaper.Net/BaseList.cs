@@ -5,7 +5,7 @@ namespace LogReaper.Net;
 
 public class BaseList
 {
-    private readonly IList<BaseListRecord> bases = new List<BaseListRecord>();
+    public IList<BaseListRecord> Bases { get; set; } = new List<BaseListRecord>();
 
     private static string ReadBasesRaw(string fileName)
     {
@@ -82,7 +82,7 @@ public class BaseList
 
         foreach (string record in basesRawList)
         {
-            bases.Add(ProcessRawBase(record));
+            Bases.Add(ProcessRawBase(record));
         }
     }
 

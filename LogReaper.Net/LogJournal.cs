@@ -22,7 +22,7 @@ internal class LogJournal
         readMachine = new ReadMachine(fileReader);
     }
 
-    public void close()
+    public void Close()
     {
         fileReader?.Close();
     }

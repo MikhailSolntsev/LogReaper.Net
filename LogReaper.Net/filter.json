@@ -1,0 +1,5 @@
+{
+  "events": ["_$Event$_.EventExample"],
+  "levels": ["E", "X", "A", "M", "P", "L", "E"],
+  "transactionStatuses": ["E", "X", "A", "M", "P", "L", "E"]
+}
