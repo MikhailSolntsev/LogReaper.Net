@@ -1,4 +1,6 @@
-﻿using LogReaper.Net.Models;
+﻿
+using LogReaper.Net.Models;
+using LogReaper.Net.Service;
 
 namespace LogReaper.Net;
 
@@ -8,29 +10,35 @@ internal class Program
     {
         if (args.Length == 0)
         {
+            Console.WriteLine("No parameters was set");
             return;
         }
 
-        var startTime = DateTime.UtcNow.Ticks;
+        TimeTracker timeTracker = new TimeTracker();
+        timeTracker.StartTracking();
 
-        var config = new LogConfig(args[0]);
+        LocalLogger logger = new();
+
+        Configuration config = ConfigReader.ReadConfig(args[0]);
+
+        var baseList = BaseList.Read(config.LogDirectory);
+
         var converter = new RecordConverter();
+        converter.ReadRepresentations(config.LogDirectory);
+        converter.ReadFilter(config.LogDirectory);
 
-        converter.ReadConfig(args[0]);
-
-        var baseList = new BaseList();
-        baseList.Read(config.LogDirectory);
-
-        var bases = baseList.Bases.Where(it => config.Bases.Contains(it.Name)).ToList();
-
-        foreach (BaseListRecord record in bases)
+        foreach (BaseListRecord record in baseList)
         {
-            LogReader reader = new LogReader(config, record, converter);
+            if (!config.Bases.Contains(record.Name))
+            {
+                continue;
+            }
+
+            LogReader reader = new (config, record, converter, logger);
             await reader.ReadAsync();
         };
 
-        var endTime = DateTime.UtcNow.Ticks;
-
-        Console.WriteLine($"Завершено. Длительность выполнения: {(endTime - startTime) / 1000} секунд\"");
+        timeTracker.StopTracking();
+        
     }
 }

@@ -17,7 +17,7 @@ public class RecordConverterTests
         };
 
         RecordConverter recordConverter = new RecordConverter();
-        string result = recordConverter.ElkToJson(record);
+        string result = recordConverter.ElkRecordToJsonString(record);
 
         result.FirstOrDefault(c => c == '\n', '-').Should().Be('-');
     }

@@ -1,7 +1,7 @@
 ﻿
 using LogReaper.Net.Exceptions;
 
-namespace LogReaper.Net;
+namespace LogReaper.Net.Service;
 
 public static class FileHelper
 {
@@ -56,7 +56,7 @@ public static class FileHelper
             }
         }
 
-        string newFileName = $"{directory}{file.Name}";
+        string newFileName = Path.Combine(directory, file.Name);
         file.MoveTo(newFileName);
 
         var dest = new FileInfo(newFileName);

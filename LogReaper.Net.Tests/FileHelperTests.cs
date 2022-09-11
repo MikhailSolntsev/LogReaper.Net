@@ -1,4 +1,6 @@
 ﻿
+using LogReaper.Net.Service;
+
 namespace LogReaper.Net.Tests;
 
 public class FileHelperTests : IDisposable

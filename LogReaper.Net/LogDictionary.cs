@@ -1,6 +1,5 @@
 ﻿
 using LogReaper.Net.Models;
-using System.Text;
 
 namespace LogReaper.Net;
 
@@ -93,18 +92,6 @@ public class LogDictionary
         record.Id = uint.Parse(readMachine.ReadValue());
 
         return record;
-    }
-
-    override public string ToString()
-    {
-        var builder = new StringBuilder();
-        builder.AppendLine("{{")
-            .AppendLine($"users: {Users}")
-            .AppendLine($"computers: {Computers}")
-            .AppendLine($"events: {Events}")
-            .AppendLine("}}");
-
-        return builder.ToString();
     }
 
 }

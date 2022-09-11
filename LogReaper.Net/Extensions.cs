@@ -5,24 +5,6 @@ namespace LogReaper.Net;
 
 public static class Extensions
 {
-    public static ElkRecord ToElkRecord(this LogRecord record, LogDictionary dictionary) =>
-        new()
-        {
-            Datetime = record.Datetime.ToDateTimeString(),
-            TransactionStatus = record.TransactionStatus,
-            TransactionNumber = record.TransactionNumber,
-            User = dictionary.Users[record.User] ?? "\"\"",
-            Computer = dictionary.Computers[record.Computer] ?? "\"\"",
-            Server = dictionary.Servers[record.Server] ?? "\"\"",
-            Application = dictionary.Applications[record.Application] ?? "\"\"",
-            Event = dictionary.Events[record.EventId] ?? "\"\"",
-            Importance = record.Importance,
-            Comment = record.Comment,
-            Metadata = dictionary.Metadata[record.Metadata] ?? "\"\"",
-            Representation = record.Representation,
-            Session = record.Session
-        };
-
     public static string ToDateTimeString(this long source)
     {
         long tdatetime = source;
@@ -92,4 +74,5 @@ public static class Extensions
 
         return result;
     }
+
 }

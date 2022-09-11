@@ -1,14 +1,13 @@
-﻿
-using Microsoft.Extensions.Logging;
+﻿using LogReaper.Net.Service;
 
-namespace LogReaper.Net;
+namespace LogReaper.Net.Elastic;
 
 public class ElkSender
 {
     private readonly string baseUrl;
-    private readonly ILogger logger;
+    private readonly ILocalLogger logger;
 
-    public ElkSender(string baseUrl, ILogger logger)
+    public ElkSender(string baseUrl, ILocalLogger logger)
     {
         this.baseUrl = baseUrl;
         this.logger = logger;
@@ -31,7 +30,7 @@ public class ElkSender
         var content = new StringContent(data);
         var response = await client.PostAsync(url, content);
 
-        logger.LogInformation(response.ToString());
+        logger.LogDebug(response.ToString());
     }
 
 }

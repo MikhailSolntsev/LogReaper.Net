@@ -74,16 +74,20 @@ public class BaseList
         return record;
     }
 
-    public void Read(string directory)
+    public static IList<BaseListRecord> Read(string directory)
     {
         var fileName = Path.Combine(directory, "1CV8Clst.lst");
         var basesRaw = ReadBasesRaw(fileName);
         var basesRawList = GetBasesRawList(basesRaw);
 
+        IList<BaseListRecord> bases = new List<BaseListRecord>();
+
         foreach (string record in basesRawList)
         {
-            Bases.Add(ProcessRawBase(record));
+            bases.Add(ProcessRawBase(record));
         }
+
+        return bases;
     }
 
 }

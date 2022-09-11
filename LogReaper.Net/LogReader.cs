@@ -1,38 +1,29 @@
 ﻿
 using LogReaper.Net.Models;
-using System.Collections.Generic;
-using System.Reflection;
-using System;
-using Microsoft.Extensions.Logging;
 using LogReaper.Net.Exceptions;
+using LogReaper.Net.Service;
+using LogReaper.Net.Elastic;
 
 namespace LogReaper.Net;
 
 internal class LogReader
 {
-    private LogConfig config;
+    private Configuration config;
     private BaseListRecord baseRecord;
     private RecordConverter converter;
 
     private LogDictionary dictionary = new();
     private ElkSender sender;
 
-    private ILogger logger;
+    private ILocalLogger logger;
 
-    public LogReader(LogConfig config, BaseListRecord baseRecord, RecordConverter converter)
+    public LogReader(Configuration config, BaseListRecord baseRecord, RecordConverter converter, ILocalLogger logger)
     {
         this.config = config;
         this.baseRecord = baseRecord;
         this.converter = converter;
+        this.logger = logger;
         sender = new ElkSender(config.ElkUrl, logger);
-    }
-
-    public LogReader(LogConfig config, BaseListRecord baseRecord, RecordConverter converter, ElkSender sender)
-    {
-        this.config = config;
-        this.baseRecord = baseRecord;
-        this.converter = converter;
-        this.sender = sender;
     }
 
     public async Task ReadAsync()
@@ -40,23 +31,23 @@ internal class LogReader
         var directory = Path.Combine(config.LogDirectory, baseRecord.Uid);
         var files = FileHelper.GetUnlockedFiles(directory);
 
-        logger.Log(LogLevel.Information, $"Найдено ${files.Count} файлов", baseRecord.Name);
+        logger.LogInfo($"Найдено ${files.Count} файлов", baseRecord.Name);
 
         if (files.Count == 0)
         {
             return;
         }
 
-        logger.Log(LogLevel.Information, "Чтение словаря", baseRecord.Name);
+        logger.LogInfo("Чтение словаря", baseRecord.Name);
         dictionary.Read(directory);
 
         foreach (var fileName in files)
         {
-            logger.Log(LogLevel.Information, $"Чтение файла \'{fileName}\'", baseRecord.Name);
+            logger.LogInfo($"Чтение файла \'{fileName}\'", baseRecord.Name);
             await ProcessFileAsync(fileName);
         }
 
-        logger.Log(LogLevel.Information, "Завершено", baseRecord.Name);
+        logger.LogInfo("Завершено", baseRecord.Name);
         dictionary.Clear();
     }
 
@@ -68,8 +59,8 @@ internal class LogReader
             await ReadFileAsync(fileName);
         }
         catch (Exception e) {
-            logger.Log(LogLevel.Information, $"Ошибка чтения файла \'{fileName}\': {e.Message}", baseRecord.Name);
-            logger.Log(LogLevel.Error, message: e.StackTrace);
+            logger.LogError($"Ошибка чтения файла \'{fileName}\': {e.Message}", baseRecord.Name);
+            logger.LogError(e.StackTrace);
             return;
         }
 
@@ -79,15 +70,15 @@ internal class LogReader
         }
         catch (DirectoryCreationException e)
         {
-            logger.Log(LogLevel.Information, $"Ошибка создания каталога: {e.Message}", baseRecord.Name);
+            logger.LogError($"Ошибка создания каталога: {e.Message}", baseRecord.Name);
         }
         catch (FileRenameException e)
         {
-            logger.Log(LogLevel.Information, $"Ошибка переименования файла: {e.Message}", baseRecord.Name);
+            logger.LogError($"Ошибка переименования файла: {e.Message}", baseRecord.Name);
         }
         catch (Exception e)
         {
-            logger.Log(LogLevel.Information, $"Ошибка перемещения файла $fileName: ${e.Message}", baseRecord.Name);
+            logger.LogError($"Ошибка перемещения файла $fileName: ${e.Message}", baseRecord.Name);
         }
     }
 
@@ -107,7 +98,7 @@ internal class LogReader
             
             if (record is not null)
             {
-                ElkRecord elkRecord = converter.Convert(record, dictionary);
+                ElkRecord? elkRecord = converter.LogRecordToElkRecord(record, dictionary);
                 if (elkRecord is not null)
                 {
                     messages.Add(elkRecord);
@@ -116,38 +107,35 @@ internal class LogReader
 
             if (messages.Count == config.BulkSize)
             {
-                try
-                {
-                    await sender.BulkPostAsync(converter.ConvertListToMessage(messages, index));
-                }
-                catch (Exception e)
-                {
-                    message("Ошибка записи пачки в Elastic: ${e.message}");
-                    journal.Close();
-                    throw;
-                }
                 counter += messages.Count;
-                messages.Clear();
+                await SendBulkToStorageAsync(messages, index);
             }
         }
-        journal.Close();
 
         if (messages.Count > 0)
         {
-                try
-                {
-                await sender.BulkPostAsync(converter.ConvertListToMessage(messages, index));
-                }
-                catch (Exception e)
-                {
-                    message("Ошибка записи пачки в Elastic: ${e.message}");
-                    journal.Close();
-                    throw;
-                }
             counter += messages.Count;
+            await SendBulkToStorageAsync(messages, index);
+        }
+        
+        journal.Close();
+
+        logger.LogInfo($"Найдено {counter} записей", baseRecord.Name);
+    }
+
+    private async Task SendBulkToStorageAsync(List<ElkRecord> messages, string index)
+    {
+        try
+        {
+            await sender.BulkPostAsync(converter.ElkRecordListToElkMessage(messages, index));
+        }
+        catch (Exception e)
+        {
+            logger.LogError($"Ошибка записи пачки в Elastic: {e.Message}");
+            throw;
         }
 
-        message("Найдено $counter записей", baseRecord.Name);
+        messages.Clear();
     }
 
     private string PeriodFromFileName(string fileName)
@@ -159,13 +147,9 @@ internal class LogReader
 
     private void ManageProcessedFile(string fileName)
     {
-        message("Перемещение файла \"$fileName\"", baseRecord.Name);
+        logger.LogInfo("Перемещение файла \"$fileName\"", baseRecord.Name);
         var directory = Path.Combine(config.BackupDirectory, baseRecord.Name);
         FileHelper.MoveFile(fileName, directory);
     }
 
-    private void message(string v, string name = "")
-    {
-        throw new NotImplementedException();
-    }
 }
