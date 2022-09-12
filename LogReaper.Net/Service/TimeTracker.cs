@@ -1,18 +1,20 @@
 ﻿
 namespace LogReaper.Net.Service;
 
-internal class TimeTracker
+public class TimeTracker
 {
     private DateTime startTime;
 
-    internal void StartTracking()
+    public void StartTracking()
     {
         startTime = DateTime.UtcNow;
     }
 
-    internal void StopTracking()
+    public double StopTracking()
     {
         DateTime stopTime = DateTime.UtcNow;
+        double mills = (stopTime - startTime).TotalMilliseconds;
         Console.WriteLine($"Loggins last for {(stopTime - startTime).TotalSeconds} seconds");
+        return mills;
     }
 }

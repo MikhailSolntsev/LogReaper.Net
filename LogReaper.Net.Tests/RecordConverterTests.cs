@@ -1,6 +1,7 @@
 ﻿
 using LogReaper.Net.Models;
 using LogReaper.Net;
+using LogReaper.Net.Service;
 
 namespace LogReaper.Net.Tests;
 
@@ -16,7 +17,10 @@ public class RecordConverterTests
             Computer = "My Computer"
         };
 
-        RecordConverter recordConverter = new RecordConverter();
+        ILocalLogger logger = new LocalLogger();
+
+        RecordConverter recordConverter = new RecordConverter(logger);
+
         string result = recordConverter.ElkRecordToJsonString(record);
 
         result.FirstOrDefault(c => c == '\n', '-').Should().Be('-');

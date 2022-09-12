@@ -17,14 +17,11 @@ public class ElkSender
     {
         await DoRequestAsync($"{baseUrl}/_bulk", data);
     }
-
-    public async Task PostAsync(string index, string data)
-    {
-        await DoRequestAsync($"{baseUrl}/{index}/_doc", data);
-    }
-
+    
     private async Task DoRequestAsync(string url, string data)
     {
+        logger.LogDebug("Sending message...");
+
         using var client = new HttpClient();
         client.DefaultRequestHeaders.Add("Content-Type", "application/json");
         var content = new StringContent(data);

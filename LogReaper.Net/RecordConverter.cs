@@ -7,25 +7,27 @@ namespace LogReaper.Net;
 
 public class RecordConverter
 {
-    private Dictionary<string, string> events = new();
-    private Dictionary<string, string> levels = new ();
-    private Dictionary<string, string> useragents = new();
-    private Dictionary<string, string> transactions = new();
+    private RepresentationData representations = null!;
     
-    private List<string> levelsFilter = new();
-    private List<string> eventsFilter = new();
-    private List<string> transactionFilter = new();
+    private FilterData filters = null!;
+
+    private readonly ILocalLogger logger;
+
+    public RecordConverter(ILocalLogger logger)
+    {
+        this.logger = logger;
+    }
 
     private bool IsFiltered(LogRecord logRecord, LogDictionary dictionary)
     {
         var element = dictionary.Events[logRecord.EventId];
-        if (eventsFilter.Contains(element)) return true;
+        if (filters.Events.Contains(element)) return true;
 
-        element = levels[logRecord.Importance];
-        if (levelsFilter.Contains(element)) return true;
+        element = representations.Levels[logRecord.Importance];
+        if (filters.Levels.Contains(element)) return true;
 
-        element = levels[logRecord.TransactionStatus];
-        if (transactionFilter.Contains(element)) return true;
+        element = representations.Levels[logRecord.TransactionStatus];
+        if (filters.TransactionStatuses.Contains(element)) return true;
         
         return false;
     }
@@ -37,17 +39,17 @@ public class RecordConverter
             return null;
         }
 
-        ElkRecord elkRecord = new ElkRecord()
+        ElkRecord elkRecord = new ()
         {
             Datetime = logRecord.Datetime.ToDateTimeString(),
-            TransactionStatus = transactions[logRecord.TransactionStatus],
+            TransactionStatus = representations.TransactionStatuses[logRecord.TransactionStatus],
             TransactionNumber = logRecord.TransactionNumber.ToTransactionNumber(),
             User = dictionary.Users[logRecord.User],
             Computer = dictionary.Computers[logRecord.Computer],
-            Application = useragents[dictionary.Applications[logRecord.Application]],
+            Application = representations.Applications[dictionary.Applications[logRecord.Application]],
             Server = dictionary.Servers[logRecord.Server],
-            Event = events[dictionary.Events[logRecord.EventId]],
-            Importance = levels[logRecord.Importance],
+            Event = representations.Events[dictionary.Events[logRecord.EventId]],
+            Importance = representations.Levels[logRecord.Importance],
             Comment = logRecord.Comment,
             Metadata = dictionary.Metadata[logRecord.Metadata],
             Representation = logRecord.Representation,
@@ -101,22 +103,27 @@ public class RecordConverter
     {
         string fullFileName = Path.Combine(directory, "filter.json");
 
+        logger.LogInfo($"Чтение фильтров из файла {fullFileName}");
+
         var stream = File.OpenRead(fullFileName);
 
-        FilterConfig? filterConfig = JsonReader<FilterConfig>.Deserialize(stream);
+        FilterData? filterData = JsonReader<FilterData>.Deserialize(stream);
 
-        if (filterConfig is null)
+        if (filterData is null)
         {
             throw new Exception($"Can't read config file {fullFileName}");
         }
-        eventsFilter = filterConfig.Events;
-        levelsFilter = filterConfig.Levels;
-        transactionFilter = filterConfig.TransactionStatuses;
+
+        filters = filterData;
+
+        logger.LogInfo("Чтение фильтров завершено");
     }
 
     public void ReadRepresentations(string directory)
     {
         string fullFileName = Path.Combine(directory, "representation.json");
+
+        logger.LogInfo($"Чтение представлений из файла {fullFileName}");
 
         var stream = File.OpenRead(fullFileName);
         RepresentationData? representationData = JsonReader<RepresentationData>.Deserialize(stream);
@@ -126,10 +133,9 @@ public class RecordConverter
             throw new Exception($"Can't read represenations from file {fullFileName}");
         }
 
-        events = representationData.Events;
-        levels = representationData.Levels;
-        useragents = representationData.Applications;
-        transactions = representationData.TransactionStatuses;
+        representations = representationData;
+        
+        logger.LogInfo("Чтение представлений завершено");
     }
     
     private class RepresentationData
@@ -140,7 +146,7 @@ public class RecordConverter
         public Dictionary<string, string> TransactionStatuses { get; set; } = null!;
     }
 
-    private class FilterConfig
+    private class FilterData
     {
         public List<string> Events { get; set; } = null!;
         public List<string> Levels { get; set; } = null!;

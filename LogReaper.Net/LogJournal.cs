@@ -6,18 +6,18 @@ namespace LogReaper.Net;
 internal class LogJournal
 {
     private TextReader? fileReader = null;
-    private ReadMachine? readMachine = null;
+    private OdinAssFileReader? readMachine = null;
     
     public void Open(string fileName)
     {
         fileReader = new StreamReader(File.OpenRead(fileName));
-        readMachine = new ReadMachine(fileReader);
+        readMachine = new OdinAssFileReader(fileReader);
     }
 
     public void OpenString(string input)
     {
         fileReader = new StringReader(input);
-        readMachine = new ReadMachine(fileReader);
+        readMachine = new OdinAssFileReader(fileReader);
     }
 
     public void Close()
@@ -38,7 +38,7 @@ internal class LogJournal
         return ReadLogRecord(readMachine);
     }
 
-    private static LogRecord? ReadLogRecord(ReadMachine readMachine)
+    private static LogRecord? ReadLogRecord(OdinAssFileReader readMachine)
     {
         if (!readMachine.ReadBegin()) return null;
 

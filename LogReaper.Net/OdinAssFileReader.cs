@@ -3,12 +3,12 @@ using System.Text;
 
 namespace LogReaper.Net;
 
-public class ReadMachine
+public class OdinAssFileReader
 {
     private readonly TextReader reader;
     private string? currentString = null;
 
-    public ReadMachine(TextReader reader)
+    public OdinAssFileReader(TextReader reader)
     {
         this.reader = reader;
 
@@ -67,12 +67,19 @@ public class ReadMachine
     {
         var result = Math.Max(Math.Max(value1, value2), Math.Max(value3, value4));
 
-        var range = Enumerable.Range(0, result);
+        if (result < 0)
+        {
+            return -1;
+        }
 
-        if (range.Contains(value1)) result = value1;
-        if (range.Contains(value2)) result = value1;
-        if (range.Contains(value3)) result = value1;
-        if (range.Contains(value4)) result = value1;
+        int[] range = new[] { value1, value2, value3, value4 };
+        result = range.Where(v => v >= 0).Min();
+        //var range = Enumerable.Range(0, result).Min;
+
+        //if (range.Contains(value1)) result = value1;
+        //if (range.Contains(value2)) result = value2;
+        //if (range.Contains(value3)) result = value3;
+        //if (range.Contains(value4)) result = value4;
 
         return result;
     }
@@ -141,7 +148,6 @@ public class ReadMachine
                 if (!AddNextString())
                 {
                     builder.Append(currentString);
-                    break;
                 }
                 continue;
             }
@@ -153,7 +159,6 @@ public class ReadMachine
             {
                 builder.Append(substring).Append('{');
                 if (!isText) level += 1;
-                break;
             }
             else if (minimum == bracketEnd)
             {

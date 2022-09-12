@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "LogReaper.Net": {
+      "commandName": "Project",
+      "commandLineArgs": "d:\\VSLessons\\0001\\LogReaper.Net\\LogReaper.Net\\"
+    }
+  }
+}

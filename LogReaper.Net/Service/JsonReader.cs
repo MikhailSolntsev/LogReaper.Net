@@ -19,7 +19,7 @@ internal static class JsonReader<T>
         JsonSerializerOptions options = new JsonSerializerOptions()
         {
             IncludeFields = true,
-            PropertyNameCaseInsensitive = false,
+            PropertyNameCaseInsensitive = true,
             WriteIndented = true,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };

@@ -19,23 +19,26 @@ internal class Program
 
         LocalLogger logger = new();
 
-        Configuration config = ConfigReader.ReadConfig(args[0]);
+        Configuration config = ConfigReader.ReadConfig(args[0], logger);
 
-        var baseList = BaseList.Read(config.LogDirectory);
+        var baseList = BaseListReader.Read(config.LogDirectory, logger);
 
-        var converter = new RecordConverter();
-        converter.ReadRepresentations(config.LogDirectory);
-        converter.ReadFilter(config.LogDirectory);
+        var converter = new RecordConverter(logger);
+        converter.ReadRepresentations(args[0]);
+        converter.ReadFilter(args[0]);
+
+        logger.LogInfo("Обработка журналов регистрации баз");
 
         foreach (BaseListRecord record in baseList)
         {
             if (!config.Bases.Contains(record.Name))
             {
+                logger.LogInfo($"База {record.Name} пропущена, т.к. не задана в настройках");
                 continue;
             }
 
             LogReader reader = new (config, record, converter, logger);
-            await reader.ReadAsync();
+            await reader.ReadDirectoryAsync();
         };
 
         timeTracker.StopTracking();

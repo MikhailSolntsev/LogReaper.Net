@@ -44,7 +44,7 @@ public class LogDictionary
         var fileStream = File.OpenRead(dictionaryFileName);
         var fileReader = new StreamReader(fileStream);
 
-        var readMachine = new ReadMachine(fileReader);
+        var readMachine = new OdinAssFileReader(fileReader);
 
         while (!readMachine.EOF())
         {
@@ -58,24 +58,7 @@ public class LogDictionary
         fileStream.Close();
     }
 
-    public void readString(string input)
-    {
-        var reader = new StringReader(input);
-
-        var readMachine = new ReadMachine(reader);
-
-        while (!readMachine.EOF())
-        {
-            var record = ReadDictionaryRecord(readMachine);
-            if (record is not null)
-            {
-                AddRecord(record);
-            }
-        }
-        reader.Close();
-    }
-
-    private DictionaryRecord? ReadDictionaryRecord(ReadMachine readMachine)
+    private DictionaryRecord? ReadDictionaryRecord(OdinAssFileReader readMachine)
     {
         if (!readMachine.ReadBegin()) return null;
 

@@ -16,10 +16,8 @@ public static class FileHelper
 
         foreach (var file in files)
         {
-            if (!IsFileLocked(file)) unlockedFiles.Add(file)
-                    ;
+            if (!IsFileLocked(file)) unlockedFiles.Add(file);
         }
-        //files.Select(file => { ; return file; });
 
         return unlockedFiles;
     }

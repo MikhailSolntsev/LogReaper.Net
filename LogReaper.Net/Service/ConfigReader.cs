@@ -5,9 +5,11 @@ namespace LogReaper.Net.Service;
 
 internal class ConfigReader
 {
-    public static Configuration ReadConfig(string directory)
+    public static Configuration ReadConfig(string directory, ILocalLogger logger)
     {
         string fileName = Path.Combine(directory, "config.json");
+
+        logger.LogInfo($"Чтение конфигурации из файла {fileName}");
 
         var stream = File.OpenRead(fileName);
 
@@ -17,6 +19,8 @@ internal class ConfigReader
         {
             throw new Exception("Can't read configuration file config.json");
         }
+
+        logger.LogInfo("Чтение конфигурации завершено");
 
         return config;
     }

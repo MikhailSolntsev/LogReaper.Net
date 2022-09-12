@@ -1,17 +1,16 @@
 ﻿
 using LogReaper.Net.Models;
+using LogReaper.Net.Service;
 
 namespace LogReaper.Net;
 
-public class BaseList
+public class BaseListReader
 {
-    public IList<BaseListRecord> Bases { get; set; } = new List<BaseListRecord>();
-
     private static string ReadBasesRaw(string fileName)
     {
         var fileStream = File.OpenRead(fileName);
         var fileReader = new StreamReader(fileStream);
-        var readMachine = new ReadMachine(fileReader);
+        var readMachine = new OdinAssFileReader(fileReader);
         var basesRaw = string.Empty;
 
         if (!readMachine.EOF()) {
@@ -31,14 +30,14 @@ public class BaseList
     private static List<string> GetBasesRawList(string basesRaw)
     {
         var reader = new StringReader(basesRaw);
-        var readMachine = new ReadMachine(reader);
+        var readMachine = new OdinAssFileReader(reader);
         var rawList = new List<string>();
 
         while (!readMachine.EOF())
         {
             if (readMachine.ReadBegin())
             {
-                int.Parse(readMachine.ReadValue().Trim()); //  what is this????
+                readMachine.ReadValue(); //  number of bases
                 var record = readMachine.ReadStructure().Trim();
                 while (!string.IsNullOrEmpty(record))
                 {
@@ -56,7 +55,7 @@ public class BaseList
     private static BaseListRecord ProcessRawBase(string rawBase)
     {
         var reader = new StringReader(rawBase);
-        var readMachine = new ReadMachine(reader);
+        var readMachine = new OdinAssFileReader(reader);
         var record = new BaseListRecord();
 
         if (!readMachine.EOF())
@@ -74,9 +73,12 @@ public class BaseList
         return record;
     }
 
-    public static IList<BaseListRecord> Read(string directory)
+    public static IList<BaseListRecord> Read(string directory, ILocalLogger logger)
     {
         var fileName = Path.Combine(directory, "1CV8Clst.lst");
+
+        logger.LogInfo($"Чтение списка баз из файла {fileName}");
+
         var basesRaw = ReadBasesRaw(fileName);
         var basesRawList = GetBasesRawList(basesRaw);
 
@@ -86,6 +88,8 @@ public class BaseList
         {
             bases.Add(ProcessRawBase(record));
         }
+
+        logger.LogInfo($"Чтение списка баз завершено. Прочитано {bases.Count} элементов");
 
         return bases;
     }

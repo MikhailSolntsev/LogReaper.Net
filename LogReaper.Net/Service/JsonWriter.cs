@@ -22,7 +22,7 @@ internal static class JsonWriter<T>
         {
             IncludeFields = true,
             PropertyNameCaseInsensitive = false,
-            WriteIndented = true,
+            WriteIndented = false,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 

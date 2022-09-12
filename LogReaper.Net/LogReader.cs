@@ -26,28 +26,28 @@ internal class LogReader
         sender = new ElkSender(config.ElkUrl, logger);
     }
 
-    public async Task ReadAsync()
+    public async Task ReadDirectoryAsync()
     {
         var directory = Path.Combine(config.LogDirectory, baseRecord.Uid);
         var files = FileHelper.GetUnlockedFiles(directory);
 
-        logger.LogInfo($"Найдено ${files.Count} файлов", baseRecord.Name);
+        logger.LogInfo($"[{baseRecord.Name}] Найдено ${files.Count} файлов");
 
         if (files.Count == 0)
         {
             return;
         }
 
-        logger.LogInfo("Чтение словаря", baseRecord.Name);
+        logger.LogInfo($"[{baseRecord.Name}] Чтение словаря");
         dictionary.Read(directory);
 
         foreach (var fileName in files)
         {
-            logger.LogInfo($"Чтение файла \'{fileName}\'", baseRecord.Name);
+            logger.LogInfo($"[{baseRecord.Name}] Чтение файла \'{fileName}\'");
             await ProcessFileAsync(fileName);
         }
 
-        logger.LogInfo("Завершено", baseRecord.Name);
+        logger.LogInfo($"[{baseRecord.Name}] Завершено");
         dictionary.Clear();
     }
 
@@ -59,7 +59,7 @@ internal class LogReader
             await ReadFileAsync(fileName);
         }
         catch (Exception e) {
-            logger.LogError($"Ошибка чтения файла \'{fileName}\': {e.Message}", baseRecord.Name);
+            logger.LogError($"[{baseRecord.Name}] Ошибка чтения файла \'{fileName}\': {e.Message}");
             logger.LogError(e.StackTrace);
             return;
         }
@@ -70,15 +70,15 @@ internal class LogReader
         }
         catch (DirectoryCreationException e)
         {
-            logger.LogError($"Ошибка создания каталога: {e.Message}", baseRecord.Name);
+            logger.LogError($"[{baseRecord.Name}] Ошибка создания каталога: {e.Message}");
         }
         catch (FileRenameException e)
         {
-            logger.LogError($"Ошибка переименования файла: {e.Message}", baseRecord.Name);
+            logger.LogError($"[{baseRecord.Name}] Ошибка переименования файла: {e.Message}");
         }
         catch (Exception e)
         {
-            logger.LogError($"Ошибка перемещения файла $fileName: ${e.Message}", baseRecord.Name);
+            logger.LogError($"[{baseRecord.Name}] Ошибка перемещения файла $fileName: ${e.Message}");
         }
     }
 
@@ -120,7 +120,7 @@ internal class LogReader
         
         journal.Close();
 
-        logger.LogInfo($"Найдено {counter} записей", baseRecord.Name);
+        logger.LogInfo($"[{baseRecord.Name}] Найдено {counter} записей");
     }
 
     private async Task SendBulkToStorageAsync(List<ElkRecord> messages, string index)
@@ -147,7 +147,7 @@ internal class LogReader
 
     private void ManageProcessedFile(string fileName)
     {
-        logger.LogInfo("Перемещение файла \"$fileName\"", baseRecord.Name);
+        logger.LogInfo($"[{baseRecord.Name}] Перемещение файла \"{fileName}\"");
         var directory = Path.Combine(config.BackupDirectory, baseRecord.Name);
         FileHelper.MoveFile(fileName, directory);
     }

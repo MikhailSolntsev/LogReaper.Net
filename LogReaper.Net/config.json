@@ -1,7 +1,7 @@
 {
-  "Bases": [ "" ],
-  "LogDirectory": "",
-  "BackupDirectory": "",
-  "ElkUrl": "",
+  "Bases": [ "solntsev_ouspb_dev" ],
+  "LogDirectory": "d:\\1C\\srvinfo\\reg_1541\\",
+  "BackupDirectory": "d:\\1C\\bckp\\",
+  "ElkUrl": "http://localhost:9200",
   "BulkSize":  50
 }
