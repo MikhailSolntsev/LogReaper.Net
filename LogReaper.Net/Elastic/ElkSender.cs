@@ -1,4 +1,5 @@
 ﻿using LogReaper.Net.Service;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace LogReaper.Net.Elastic;
 
@@ -23,11 +24,19 @@ public class ElkSender
         logger.LogDebug("Sending message...");
 
         using var client = new HttpClient();
-        client.DefaultRequestHeaders.Add("Content-Type", "application/json");
-        var content = new StringContent(data);
+        client.DefaultRequestHeaders
+            .Accept
+            .Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+        var request = new HttpRequestMessage(HttpMethod.Post, url);
+        var content = new StringContent(data, System.Text.Encoding.UTF8, "application/json");
         var response = await client.PostAsync(url, content);
 
-        logger.LogDebug(response.ToString());
+        logger.LogDebug($"Status code: {response.StatusCode}");
+        if (response.StatusCode != System.Net.HttpStatusCode.OK)
+        {
+            logger.LogError(response.ToString());
+        }
     }
 
 }

@@ -33,9 +33,11 @@ internal class Program
         {
             if (!config.Bases.Contains(record.Name))
             {
-                logger.LogInfo($"База {record.Name} пропущена, т.к. не задана в настройках");
+                logger.LogInfo($"База [{record.Name}] пропущена, т.к. не задана в настройках");
                 continue;
             }
+
+            logger.LogInfo($"Обработка журнала базы [{record.Name}]");
 
             LogReader reader = new (config, record, converter, logger);
             await reader.ReadDirectoryAsync();

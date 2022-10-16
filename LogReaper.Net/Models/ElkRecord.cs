@@ -4,7 +4,7 @@ namespace LogReaper.Net.Models;
 public class ElkRecord
 {
     public string Datetime { get; set; } = String.Empty;
-    public string TransactionStatus { get; set; } = String.Empty;
+    public string TransactionStatus = String.Empty;
     public string TransactionNumber { get; set; } = String.Empty;
     public string User { get; set; } = String.Empty;
     public string Computer { get; set; } = String.Empty;

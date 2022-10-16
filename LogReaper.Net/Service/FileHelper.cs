@@ -5,7 +5,7 @@ namespace LogReaper.Net.Service;
 
 public static class FileHelper
 {
-    public const string logDirectory = "1Cv8Log\\";
+    public const string logDirectory = "1Cv8Log";
 
     public static List<string> GetUnlockedFiles(string subdirectry)
     {

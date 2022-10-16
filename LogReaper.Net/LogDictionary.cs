@@ -39,7 +39,7 @@ public class LogDictionary
 
     public void Read(string directory)
     {
-        var dictionaryFileName = directory + fileName;
+        var dictionaryFileName = Path.Combine(directory, fileName);
 
         var fileStream = File.OpenRead(dictionaryFileName);
         var fileReader = new StreamReader(fileStream);
