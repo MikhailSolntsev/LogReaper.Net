@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace LogReaper.Net.Service;
 
-internal static class JsonReader<T>
+internal static class ReadJsonService<T>
 {
 
     public static T? Deserialize(Stream stream)

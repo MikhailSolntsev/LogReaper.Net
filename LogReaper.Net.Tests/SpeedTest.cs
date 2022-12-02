@@ -20,7 +20,7 @@ public class SpeedTest
         var mils = tracker.StopTracking();
         Console.WriteLine($"LINQ result = {result}");
 
-        mils.Should().Be(0);
+        mils.Should().BeGreaterThan(0);
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public class SpeedTest
         var mils = tracker.StopTracking();
         Console.WriteLine($"Range result = {result}");
 
-        mils.Should().Be(0);
+        mils.Should().BeGreaterThan(0);
     }
 
     private int FindMinLinQ(int value1, int value2, int value3, int value4)

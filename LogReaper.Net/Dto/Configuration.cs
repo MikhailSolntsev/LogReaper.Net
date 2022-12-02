@@ -1,5 +1,4 @@
-﻿
-namespace LogReaper.Net.Dto;
+﻿namespace LogReaper.Net.Dto;
 
 public class Configuration
 {

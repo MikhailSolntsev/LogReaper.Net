@@ -1,11 +1,12 @@
 ﻿
-using LogReaper.Net.Models;
+using LogReaper.Net.Dto;
 
 namespace LogReaper.Net;
 
 public class LogDictionary
 {
     private const string fileName = "1Cv8Log\\1Cv8.lgf";
+
     private readonly uint[] dictionaryType = {1, 5, 9, 10, 11, 12};
     public Dictionary<uint, string> Users { get; set; } = new();
     public Dictionary<uint, string> Computers { get; set; } = new();

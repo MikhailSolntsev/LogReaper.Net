@@ -1,33 +1,50 @@
 ﻿
-using LogReaper.Net.Models;
+using Autofac;
+using LogReaper.Net.Configuration;
+using LogReaper.Net.Contracts;
+using LogReaper.Net.Dto;
+using LogReaper.Net.Elastic;
 using LogReaper.Net.Service;
+using Microsoft.Extensions.Configuration;
+using System.Reflection.PortableExecutable;
 
 namespace LogReaper.Net;
 
 internal class Program
 {
+    private static IContainer container;
+    private static string rootFolder;
+
     static async Task Main(string[] args)
     {
         if (args.Length == 0)
         {
-            Console.WriteLine("No parameters was set");
-            return;
+            throw new ArgumentException(nameof(args));
         }
+
+        rootFolder = args[0];
 
         TimeTracker timeTracker = new TimeTracker();
         timeTracker.StartTracking();
 
-        LocalLogger logger = new();
+        SetupContainer();
+        
 
-        Configuration config = ConfigReader.ReadConfig(args[0], logger);
+        var baseListReader = container.Resolve<IGetBaseListService>();
 
-        var baseList = BaseListReader.Read(config.LogDirectory, logger);
+        var logger = container.Resolve<ILocalLogger>();
 
-        var converter = new RecordConverter(logger);
-        converter.ReadRepresentations(args[0]);
-        converter.ReadFilter(args[0]);
+        var config = container.Resolve<LogReaperConfig>();
+
+        IList<BaseListRecord> baseList = baseListReader.Read(config.Files.LogDirectory);
+
+        var converter = container.Resolve<ConvertRecordService>();
+        converter.ReadRepresentations(rootFolder);
+        converter.ReadFilter(rootFolder);
 
         logger.LogInfo("Обработка журналов регистрации баз");
+
+        var reader = container.Resolve<LogReader>();
 
         foreach (BaseListRecord record in baseList)
         {
@@ -39,11 +56,34 @@ internal class Program
 
             logger.LogInfo($"Обработка журнала базы [{record.Name}]");
 
-            LogReader reader = new (config, record, converter, logger);
-            await reader.ReadDirectoryAsync();
+            await reader.ReadDirectoryAsync(record);
         };
 
         timeTracker.StopTracking();
         
     }
+
+    private static void SetupContainer()
+    {
+        var builder = new ContainerBuilder();
+
+        IConfiguration configuration = new ConfigurationBuilder()
+                    .AddJsonFile(Path.Combine(rootFolder, "appsettings.json"), true, true)
+                    .Build();
+
+        var config = configuration.Get<LogReaperConfig>();
+
+        builder.RegisterInstance(config).AsSelf().SingleInstance();
+
+        LocalLogger logger = new();
+        builder.RegisterInstance(logger).As<ILocalLogger>().SingleInstance();
+
+        builder.RegisterType<GetBaseListService>().As<IGetBaseListService>().SingleInstance();
+        builder.RegisterType<SendElasticMessageService>().As<ISendElasticMessageService>().SingleInstance();
+        builder.RegisterType<ConvertRecordService>().AsSelf().SingleInstance();
+        builder.RegisterType<LogReader>().AsSelf().SingleInstance();
+
+        container = builder.Build();
+    }
+
 }

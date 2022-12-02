@@ -1,5 +1,5 @@
 ﻿
-using LogReaper.Net.Models;
+using LogReaper.Net.Dto;
 
 namespace LogReaper.Net;
 

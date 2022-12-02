@@ -1,16 +1,18 @@
-﻿using LogReaper.Net.Service;
+﻿using LogReaper.Net.Configuration;
+using LogReaper.Net.Contracts;
+using LogReaper.Net.Service;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace LogReaper.Net.Elastic;
 
-public class ElkSender
+public sealed class SendElasticMessageService : ISendElasticMessageService
 {
     private readonly string baseUrl;
     private readonly ILocalLogger logger;
 
-    public ElkSender(string baseUrl, ILocalLogger logger)
+    public SendElasticMessageService(LogReaperConfig config, ILocalLogger logger)
     {
-        this.baseUrl = baseUrl;
+        this.baseUrl = config.Elastic.Url;
         this.logger = logger;
     }
 

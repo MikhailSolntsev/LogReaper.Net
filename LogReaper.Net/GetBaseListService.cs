@@ -1,12 +1,41 @@
 ﻿
-using LogReaper.Net.Models;
+using LogReaper.Net.Contracts;
+using LogReaper.Net.Dto;
 using LogReaper.Net.Service;
 
 namespace LogReaper.Net;
 
-public class BaseListReader
+internal class GetBaseListService : IGetBaseListService
 {
-    private static string ReadBasesRaw(string fileName)
+    private readonly ILocalLogger logger;
+
+    public GetBaseListService(ILocalLogger logger)
+    {
+        this.logger = logger;
+    }
+
+    public IList<BaseListRecord> Read(string directory)
+    {
+        var fileName = Path.Combine(directory, "1CV8Clst.lst");
+
+        logger.LogInfo($"Чтение списка баз из файла {fileName}");
+
+        var basesRaw = ReadBasesRaw(fileName);
+        var basesRawList = GetBasesRawList(basesRaw);
+
+        IList<BaseListRecord> bases = new List<BaseListRecord>();
+
+        foreach (string record in basesRawList)
+        {
+            bases.Add(ProcessRawBase(record));
+        }
+
+        logger.LogInfo($"Чтение списка баз завершено. Прочитано {bases.Count} элементов");
+
+        return bases;
+    }
+
+    private string ReadBasesRaw(string fileName)
     {
         var fileStream = File.OpenRead(fileName);
         var fileReader = new StreamReader(fileStream);
@@ -27,7 +56,7 @@ public class BaseListReader
         return basesRaw;
     }
 
-    private static List<string> GetBasesRawList(string basesRaw)
+    private List<string> GetBasesRawList(string basesRaw)
     {
         var reader = new StringReader(basesRaw);
         var readMachine = new OdinAssFileReader(reader);
@@ -52,7 +81,7 @@ public class BaseListReader
         return rawList;
     }
 
-    private static BaseListRecord ProcessRawBase(string rawBase)
+    private BaseListRecord ProcessRawBase(string rawBase)
     {
         var reader = new StringReader(rawBase);
         var readMachine = new OdinAssFileReader(reader);
@@ -71,27 +100,6 @@ public class BaseListReader
         }
 
         return record;
-    }
-
-    public static IList<BaseListRecord> Read(string directory, ILocalLogger logger)
-    {
-        var fileName = Path.Combine(directory, "1CV8Clst.lst");
-
-        logger.LogInfo($"Чтение списка баз из файла {fileName}");
-
-        var basesRaw = ReadBasesRaw(fileName);
-        var basesRawList = GetBasesRawList(basesRaw);
-
-        IList<BaseListRecord> bases = new List<BaseListRecord>();
-
-        foreach (string record in basesRawList)
-        {
-            bases.Add(ProcessRawBase(record));
-        }
-
-        logger.LogInfo($"Чтение списка баз завершено. Прочитано {bases.Count} элементов");
-
-        return bases;
     }
 
 }

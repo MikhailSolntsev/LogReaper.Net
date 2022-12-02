@@ -1,6 +1,4 @@
 ﻿
-using LogReaper.Net.Models;
-
 namespace LogReaper.Net;
 
 public static class Extensions

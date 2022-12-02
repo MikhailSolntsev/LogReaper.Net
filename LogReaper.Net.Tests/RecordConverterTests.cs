@@ -1,6 +1,5 @@
 ﻿
-using LogReaper.Net.Models;
-using LogReaper.Net;
+using LogReaper.Net.Dto;
 using LogReaper.Net.Service;
 
 namespace LogReaper.Net.Tests;
@@ -19,7 +18,7 @@ public class RecordConverterTests
 
         ILocalLogger logger = new LocalLogger();
 
-        RecordConverter recordConverter = new RecordConverter(logger);
+        ConvertRecordService recordConverter = new ConvertRecordService(logger);
 
         string result = recordConverter.ElkRecordToJsonString(record);
 

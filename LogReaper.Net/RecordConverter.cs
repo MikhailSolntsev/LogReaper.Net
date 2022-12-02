@@ -1,12 +1,11 @@
-﻿
-using LogReaper.Net.Models;
-using System.Text;
+﻿using System.Text;
 using LogReaper.Net.Service;
 using System.Transactions;
+using LogReaper.Net.Dto;
 
 namespace LogReaper.Net;
 
-public class RecordConverter
+public class ConvertRecordService
 {
     private RepresentationData representations = null!;
     
@@ -14,7 +13,7 @@ public class RecordConverter
 
     private readonly ILocalLogger logger;
 
-    public RecordConverter(ILocalLogger logger)
+    public ConvertRecordService(ILocalLogger logger)
     {
         this.logger = logger;
     }
@@ -255,7 +254,7 @@ public class RecordConverter
 
         var stream = File.OpenRead(fullFileName);
 
-        FilterData? filterData = JsonReader<FilterData>.Deserialize(stream);
+        FilterData? filterData = ReadJsonService<FilterData>.Deserialize(stream);
 
         if (filterData is null)
         {
@@ -274,7 +273,7 @@ public class RecordConverter
         logger.LogInfo($"Чтение представлений из файла {fullFileName}");
 
         var stream = File.OpenRead(fullFileName);
-        RepresentationData? representationData = JsonReader<RepresentationData>.Deserialize(stream);
+        RepresentationData? representationData = ReadJsonService<RepresentationData>.Deserialize(stream);
 
         if (representationData is null)
         {
