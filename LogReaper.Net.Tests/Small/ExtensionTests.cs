@@ -1,11 +1,10 @@
-
 using LogReaper.Net.Service;
 
-namespace LogReaper.Net.Tests;
+namespace LogReaper.Net.Tests.Small;
 
 public class ExtensionTests
 {
-    [Theory(DisplayName ="StringToPeriod должна обрезать лишнее в строке и заменять тире на точки")]
+    [Theory(DisplayName = "StringToPeriod должна обрезать лишнее в строке и заменять тире на точки")]
     [InlineData("2022-09-04T12:34:11", "2022.09.04")]
     [InlineData("2022", "2022")]
     [InlineData("2022:09:04", "2022:09:04")]

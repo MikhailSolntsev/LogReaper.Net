@@ -1,9 +1,8 @@
-﻿
-namespace LogReaper.Net.Tests;
+﻿namespace LogReaper.Net.Tests.Small;
 
 public class OdinAssFileReaderTests
 {
-    [Theory(DisplayName ="EOF should be true with empty string and false if not")]
+    [Theory(DisplayName = "EOF should be true with empty string and false if not")]
     [InlineData("", true)]
     [InlineData("true", false)]
     public void ReaderEofTrueOnEmptyString(string input, bool expected)
@@ -31,7 +30,7 @@ public class OdinAssFileReaderTests
 
         // act
         var result = reader.ReadValue();
-        
+
         // assert
         result.Should().Be(expected);
     }
@@ -39,7 +38,7 @@ public class OdinAssFileReaderTests
     [Theory(DisplayName = "Readed structure is one before comma or } in single line")]
     [InlineData("{0,{1}}", "{1}")]
     [InlineData("{2,{3,4}}", "{3,4}")]
-    [InlineData("{2,{3,4},12}","{3,4}")]
+    [InlineData("{2,{3,4},12}", "{3,4}")]
     [InlineData("{0,{1,2,\"1541\",{1,{\"DEV\",1541}},0},{269}}", "{1,2,\"1541\",{1,{\"DEV\",1541}},0}")]
     public void ReadingStructureWitnOneLineTest(string input, string expected)
     {
@@ -51,11 +50,11 @@ public class OdinAssFileReaderTests
 
         // act
         var result = reader.ReadStructure();
-            
+
         // assert
         result.Should().Be(expected);
     }
-    
+
     [Fact(DisplayName = "Reading structure with many lines")]
     public void ReadingStructureWithMultipleLinesTest()
     {

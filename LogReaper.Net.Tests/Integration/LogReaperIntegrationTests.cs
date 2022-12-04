@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LogReaper.Net.Tests
+namespace LogReaper.Net.Tests.Integration
 {
-    internal partial class LogReaperIntegrationTest
+    public partial class LogReaperIntegrationTests
     {
 
     }

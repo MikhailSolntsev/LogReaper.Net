@@ -1,9 +1,8 @@
-﻿
-using LogReaper.Net.Contracts;
+﻿using LogReaper.Net.Contracts;
 using LogReaper.Net.Dto;
 using LogReaper.Net.Service;
 
-namespace LogReaper.Net.Tests;
+namespace LogReaper.Net.Tests.Small;
 
 public class RecordConverterTests
 {
@@ -21,7 +20,7 @@ public class RecordConverterTests
         ILocalLogger logger = new LocalLogger();
         IRepresentFieldsService representFieldsService = new RepresentFieldsService(logger);
         IFilterRecordsService filterRecordsService = new FilterRecordsService(logger, representFieldsService);
-        
+
         ConvertRecordService recordConverter = new ConvertRecordService(filterRecordsService, representFieldsService);
 
         // act

@@ -1,7 +1,7 @@
 ﻿using LogReaper.Net.Service;
 using Newtonsoft.Json.Linq;
 
-namespace LogReaper.Net.Tests;
+namespace LogReaper.Net.Tests.Small;
 
 public class SpeedTest
 {
