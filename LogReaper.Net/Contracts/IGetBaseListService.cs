@@ -2,7 +2,7 @@
 
 namespace LogReaper.Net.Contracts
 {
-    internal interface IGetBaseListService
+    public interface IGetBaseListService
     {
         IList<BaseListRecord> Read(string directory);
     }

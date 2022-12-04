@@ -1,5 +1,4 @@
-﻿
-namespace LogReaper.Net.Service;
+﻿namespace LogReaper.Net.Contracts;
 
 public interface ILocalLogger
 {

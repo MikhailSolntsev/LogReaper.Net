@@ -3,21 +3,21 @@ using LogReaper.Net.Dto;
 
 namespace LogReaper.Net;
 
-internal class LogJournal
+internal class ReadOdinAssLogFileService
 {
     private TextReader? fileReader = null;
-    private OdinAssFileReader? readMachine = null;
+    private ReadAnyOdinAssFileService? readMachine = null;
     
     public void Open(string fileName)
     {
         fileReader = new StreamReader(File.OpenRead(fileName));
-        readMachine = new OdinAssFileReader(fileReader);
+        readMachine = new ReadAnyOdinAssFileService(fileReader);
     }
 
     public void OpenString(string input)
     {
         fileReader = new StringReader(input);
-        readMachine = new OdinAssFileReader(fileReader);
+        readMachine = new ReadAnyOdinAssFileService(fileReader);
     }
 
     public void Close()
@@ -38,7 +38,7 @@ internal class LogJournal
         return ReadLogRecord(readMachine);
     }
 
-    private static LogRecord? ReadLogRecord(OdinAssFileReader readMachine)
+    private static LogRecord? ReadLogRecord(ReadAnyOdinAssFileService readMachine)
     {
         if (!readMachine.ReadBegin()) return null;
 

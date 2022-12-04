@@ -1,6 +1,5 @@
 ﻿using LogReaper.Net.Configuration;
 using LogReaper.Net.Contracts;
-using LogReaper.Net.Service;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace LogReaper.Net.Elastic;

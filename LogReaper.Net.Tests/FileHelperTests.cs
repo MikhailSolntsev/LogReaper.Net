@@ -1,9 +1,8 @@
 ﻿
 using LogReaper.Net.Service;
-
 namespace LogReaper.Net.Tests;
 
-public class FileHelperTests : IDisposable
+public partial class FileHelperTests : IAsyncLifetime
 {
     private readonly string fileName1;
     private readonly string fileName2;
@@ -17,25 +16,18 @@ public class FileHelperTests : IDisposable
         fileName1 = Path.Combine(subdirectory, FileHelper.logDirectory, "file1.lgp");
         fileName2 = Path.Combine(subdirectory, FileHelper.logDirectory, "file2.lgp");
         fileName3 = Path.Combine(subdirectory, FileHelper.logDirectory, "file3.lgp");
-
-        CreateFiles();
     }
 
-    public void Dispose()
+    public Task InitializeAsync()
+    {
+        CreateFiles();
+        return Task.CompletedTask;
+    }
+
+    public Task DisposeAsync()
     {
         Directory.Delete(subdirectory, true);
-    }
-
-    [Fact(DisplayName = "If one file is open even for read, it counts as locked")]
-    public void GetCorrectUnlockedFiles()
-    {
-        using var lockedFile = File.CreateText(fileName2);
-
-        var files = FileHelper.GetUnlockedFiles(subdirectory);
-
-        files.Should().HaveCount(2);
-        files[0].Should().BeEquivalentTo(fileName1);
-        files[1].Should().BeEquivalentTo(fileName3);
+        return Task.CompletedTask;
     }
 
     private string CreateSubdirectory()
@@ -62,5 +54,4 @@ public class FileHelperTests : IDisposable
         file.Write("text 3");
         file.Close();
     }
-
 }

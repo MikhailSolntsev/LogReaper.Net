@@ -39,7 +39,7 @@ internal class GetBaseListService : IGetBaseListService
     {
         var fileStream = File.OpenRead(fileName);
         var fileReader = new StreamReader(fileStream);
-        var readMachine = new OdinAssFileReader(fileReader);
+        var readMachine = new ReadAnyOdinAssFileService(fileReader);
         var basesRaw = string.Empty;
 
         if (!readMachine.EOF()) {
@@ -59,7 +59,7 @@ internal class GetBaseListService : IGetBaseListService
     private List<string> GetBasesRawList(string basesRaw)
     {
         var reader = new StringReader(basesRaw);
-        var readMachine = new OdinAssFileReader(reader);
+        var readMachine = new ReadAnyOdinAssFileService(reader);
         var rawList = new List<string>();
 
         while (!readMachine.EOF())
@@ -84,7 +84,7 @@ internal class GetBaseListService : IGetBaseListService
     private BaseListRecord ProcessRawBase(string rawBase)
     {
         var reader = new StringReader(rawBase);
-        var readMachine = new OdinAssFileReader(reader);
+        var readMachine = new ReadAnyOdinAssFileService(reader);
         var record = new BaseListRecord();
 
         if (!readMachine.EOF())

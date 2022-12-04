@@ -1,4 +1,5 @@
 ﻿
+using LogReaper.Net.Contracts;
 using LogReaper.Net.Dto;
 using LogReaper.Net.Service;
 
@@ -9,7 +10,8 @@ public class RecordConverterTests
     [Fact]
     public void ElcRecordToStringConvertsInOneLine()
     {
-        ElkRecord record = new()
+        // arrange
+        ElasticRecord record = new()
         {
             Application = "ThinClient",
             Comment = "Ha-ha, classic",
@@ -17,11 +19,15 @@ public class RecordConverterTests
         };
 
         ILocalLogger logger = new LocalLogger();
+        IRepresentFieldsService representFieldsService = new RepresentFieldsService(logger);
+        IFilterRecordsService filterRecordsService = new FilterRecordsService(logger, representFieldsService);
+        
+        ConvertRecordService recordConverter = new ConvertRecordService(filterRecordsService, representFieldsService);
 
-        ConvertRecordService recordConverter = new ConvertRecordService(logger);
+        // act
+        string result = recordConverter.ElasticRecordToJsonString(record);
 
-        string result = recordConverter.ElkRecordToJsonString(record);
-
-        result.FirstOrDefault(c => c == '\n', '-').Should().Be('-');
+        // assert
+        result.Contains('\n').Should().BeFalse();
     }
 }

@@ -13,5 +13,7 @@ namespace LogReaper.Net.Configuration
         public FilesConfig Files { get; set; }
 
         public ElasticConfig Elastic { get; set; }
+
+        public string RootDirectory { get; set; }
     }
 }

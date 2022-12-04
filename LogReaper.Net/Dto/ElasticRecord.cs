@@ -1,7 +1,7 @@
 ﻿
 namespace LogReaper.Net.Dto;
 
-public sealed class ElkRecord
+public sealed class ElasticRecord
 {
     public string Datetime { get; set; }
     public string TransactionStatus { get; set; }

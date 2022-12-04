@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace LogReaper.Net.Service;
 
-internal static class JsonWriter<T>
+internal static class JsonSerializer<T>
 {
 
     public static string Serialize(T source)

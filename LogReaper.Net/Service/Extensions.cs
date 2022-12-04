@@ -1,5 +1,4 @@
-﻿
-namespace LogReaper.Net;
+﻿namespace LogReaper.Net.Service;
 
 public static class Extensions
 {
@@ -31,7 +30,7 @@ public static class Extensions
         //  Транзакция в формате записи из двух элементов преобразованных в шестнадцатеричное число
         //  – первый – число секунд с 01.01.0001 00:00:00 умноженное на 10000, второй – номер транзакции;
         string secondsString = source.Substring(1, 13);
-        Int64 secondsAll = Convert.ToInt64(secondsString, 16) / 10000;
+        long secondsAll = Convert.ToInt64(secondsString, 16) / 10000;
         int delimeter = 86400; // 24 * 60 * 60
         int hours = (int)(secondsAll / delimeter);
         int seconds = (int)(secondsAll % delimeter);
@@ -39,7 +38,7 @@ public static class Extensions
         string numberString = source[15..^1];
         int number = Convert.ToInt32(numberString, 16);
 
-        DateTime date = new (1, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        DateTime date = new(1, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         date += TimeSpan.FromDays(hours);
         date += TimeSpan.FromSeconds(seconds);
 
