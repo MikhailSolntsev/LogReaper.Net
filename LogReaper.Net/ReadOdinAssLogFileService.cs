@@ -5,24 +5,11 @@ namespace LogReaper.Net;
 
 internal class ReadOdinAssLogFileService
 {
-    private TextReader? fileReader = null;
     private ReadAnyOdinAssFileService? readMachine = null;
     
-    public void Open(string fileName)
+    public void Open(TextReader reader)
     {
-        fileReader = new StreamReader(File.OpenRead(fileName));
-        readMachine = new ReadAnyOdinAssFileService(fileReader);
-    }
-
-    public void OpenString(string input)
-    {
-        fileReader = new StringReader(input);
-        readMachine = new ReadAnyOdinAssFileService(fileReader);
-    }
-
-    public void Close()
-    {
-        fileReader?.Close();
+        readMachine = new ReadAnyOdinAssFileService(reader);
     }
 
     public bool EOF()
@@ -31,7 +18,7 @@ internal class ReadOdinAssLogFileService
         return readMachine.EOF();
     }
 
-    public LogRecord? ReadNext()
+    public LogRecord? ReadNextRecord()
     {
         if (readMachine is null) return null;
 

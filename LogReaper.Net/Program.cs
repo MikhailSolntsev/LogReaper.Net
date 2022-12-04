@@ -1,7 +1,6 @@
 ﻿using Autofac;
 using LogReaper.Net.Configuration;
 using LogReaper.Net.Contracts;
-using LogReaper.Net.Elastic;
 using LogReaper.Net.Service;
 using Microsoft.Extensions.Configuration;
 
@@ -25,7 +24,15 @@ internal class Program
 
         var config = ReadConfiguration(args[0]);
 
-        IContainer container = SetupContainer(config);
+        var builder = new ContainerBuilder();
+
+        builder.RegisterModule<LogReaperDiModule>();
+        builder.RegisterLogger();
+        builder.RegisterConfig(config);
+        builder.RegisterHttpClient();
+        builder.RegisterBackupService();
+
+        var container = builder.Build();
 
         container.Resolve<IRepresentFieldsService>().ReadRepresentationsFromDirectory(config.RootDirectory);
         container.Resolve<IFilterRecordsService>().ReadFiltersFromDirectory(config.RootDirectory);
@@ -54,44 +61,5 @@ internal class Program
         return config;
     }
 
-    private static IContainer SetupContainer(LogReaperConfig config)
-    {
-        var builder = new ContainerBuilder();
-
-        builder.RegisterInstance(config).AsSelf().SingleInstance();
-
-        LocalLogger logger = new();
-        builder.RegisterInstance(logger).As<ILocalLogger>().SingleInstance();
-
-        builder.RegisterType<GetBaseListService>()
-            .As<IGetBaseListService>()
-            .SingleInstance();
-
-        builder.RegisterType<SendElasticMessageService>()
-            .As<ISendElasticMessageService>()
-            .SingleInstance();
-
-        builder.RegisterType<ConvertRecordService>()
-            .AsSelf()
-            .SingleInstance();
-
-        builder.RegisterType<ProcessBaseDirectoryService>()
-            .AsSelf()
-            .SingleInstance();
-
-        builder.RegisterType<FilterRecordsService>()
-            .As<IFilterRecordsService>()
-            .SingleInstance();
-
-        builder.RegisterType<RepresentFieldsService>()
-            .As<IRepresentFieldsService>()
-            .SingleInstance();
-
-        builder.RegisterType<LogProcessor>()
-            .AsSelf()
-            .SingleInstance();
-
-        return builder.Build();
-    }
 
 }

@@ -4,6 +4,6 @@ namespace LogReaper.Net.Contracts
 {
     public interface IGetBaseListService
     {
-        IList<BaseListRecord> Read(string directory);
+        IReadOnlyCollection<BaseListRecord> Read(string directory);
     }
 }

@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LogReaper.Net.Configuration;
-using LogReaper.Net.Contracts;
+﻿using LogReaper.Net.Contracts;
 using LogReaper.Net.Dto;
 using LogReaper.Net.Service;
-using Microsoft.Extensions.Logging;
 
 namespace LogReaper.Net
 {

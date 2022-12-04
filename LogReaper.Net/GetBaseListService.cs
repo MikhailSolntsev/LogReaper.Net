@@ -14,16 +14,16 @@ internal class GetBaseListService : IGetBaseListService
         this.logger = logger;
     }
 
-    public IList<BaseListRecord> Read(string directory)
+    public IReadOnlyCollection<BaseListRecord> Read(string directory)
     {
         var fileName = Path.Combine(directory, "1CV8Clst.lst");
 
         logger.LogInfo($"Чтение списка баз из файла {fileName}");
 
-        var basesRaw = ReadBasesRaw(fileName);
-        var basesRawList = GetBasesRawList(basesRaw);
+        var basesStringStructure = ReadBasesStringStructure(fileName);
+        var basesRawList = GetBasesStringList(basesStringStructure);
 
-        IList<BaseListRecord> bases = new List<BaseListRecord>();
+        var bases = new List<BaseListRecord>();
 
         foreach (string record in basesRawList)
         {
@@ -35,7 +35,7 @@ internal class GetBaseListService : IGetBaseListService
         return bases;
     }
 
-    private string ReadBasesRaw(string fileName)
+    private string ReadBasesStringStructure(string fileName)
     {
         var fileStream = File.OpenRead(fileName);
         var fileReader = new StreamReader(fileStream);
@@ -56,7 +56,7 @@ internal class GetBaseListService : IGetBaseListService
         return basesRaw;
     }
 
-    private List<string> GetBasesRawList(string basesRaw)
+    private IReadOnlyCollection<string> GetBasesStringList(string basesRaw)
     {
         var reader = new StringReader(basesRaw);
         var readMachine = new ReadAnyOdinAssFileService(reader);

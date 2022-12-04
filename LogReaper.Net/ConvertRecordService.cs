@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using LogReaper.Net.Service;
-using System.Transactions;
 using LogReaper.Net.Dto;
 using LogReaper.Net.Contracts;
 

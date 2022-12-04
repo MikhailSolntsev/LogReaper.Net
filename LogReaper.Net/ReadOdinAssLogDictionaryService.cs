@@ -1,11 +1,6 @@
 ﻿using LogReaper.Net.Dto;
 using LogReaper.Net.Enums;
 using LogReaper.Net.Service;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LogReaper.Net
 {

@@ -1,5 +1,4 @@
 ﻿namespace LogReaper.Net.Dto;
-
 public class OdinAssLogDictionary
 {
     public Dictionary<uint, string> Users { get; set; } = new();

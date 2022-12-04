@@ -1,5 +1,4 @@
-﻿using LogReaper.Net.Exceptions;
-using LogReaper.Net.Service;
+﻿using LogReaper.Net.Service;
 using LogReaper.Net.Dto;
 using LogReaper.Net.Configuration;
 using LogReaper.Net.Contracts;
@@ -13,6 +12,8 @@ public class ProcessBaseDirectoryService
     private readonly ConvertRecordService converter;
     private readonly ISendElasticMessageService elasticService;
     private readonly IRepresentFieldsService representFieldsService;
+    private readonly BackupProcessedFileService backupProcessedFileService;
+
     private OdinAssLogDictionary dictionary = null!;
 
     private BaseListRecord baseRecord;
@@ -22,13 +23,15 @@ public class ProcessBaseDirectoryService
         ConvertRecordService converter,
         ILocalLogger logger,
         ISendElasticMessageService elasticService,
-        IRepresentFieldsService representFieldsService)
+        IRepresentFieldsService representFieldsService,
+        BackupProcessedFileService backupProcessedFileService)
     {
         this.config = config;
         this.converter = converter;
         this.logger = logger;
         this.elasticService = elasticService;
         this.representFieldsService = representFieldsService;
+        this.backupProcessedFileService = backupProcessedFileService;
     }
 
     public async Task ProcessDirectoryAsync(BaseListRecord baseRecord)
@@ -75,37 +78,27 @@ public class ProcessBaseDirectoryService
             return;
         }
 
-        try
-        {
-            ManageProcessedFile(fileName);
-        }
-        catch (DirectoryCreationException e)
-        {
-            logger.LogError($"[{baseRecord.Name}] Ошибка создания каталога: {e.Message}");
-        }
-        catch (FileRenameException e)
-        {
-            logger.LogError($"[{baseRecord.Name}] Ошибка переименования файла: {e.Message}");
-        }
-        catch (Exception e)
-        {
-            logger.LogError($"[{baseRecord.Name}] Ошибка перемещения файла $fileName: ${e.Message}");
-        }
+        backupProcessedFileService.BackupProcessedFile(fileName, baseRecord);
     }
 
     private async Task ReadFileAsync(string fileName)
     {
         var messages = new List<ElasticRecord>();
+        
         var period = PeriodFromFileName(fileName);
         var index = $"{baseRecord.Name}.log-{period}";
+        elasticService.UseDefaultIndex(index);
+
         var counter = 0;
 
-        var journal = new ReadOdinAssLogFileService();
-        journal.Open(fileName);
+        var readLogFileService = new ReadOdinAssLogFileService();
 
-        while (!journal.EOF())
+        var textReader = new StreamReader(File.OpenRead(fileName));
+        readLogFileService.Open(textReader);
+
+        while (!readLogFileService.EOF())
         {
-            LogRecord? record = journal.ReadNext();
+            LogRecord? record = readLogFileService.ReadNextRecord();
             
             if (record is not null)
             {
@@ -119,34 +112,21 @@ public class ProcessBaseDirectoryService
             if (messages.Count == config.Elastic.BulkSize)
             {
                 counter += messages.Count;
-                await SendBulkToStorageAsync(messages, index);
+                await elasticService.SendBulkToStorageAsync(messages);
+                messages.Clear();
             }
         }
 
         if (messages.Count > 0)
         {
             counter += messages.Count;
-            await SendBulkToStorageAsync(messages, index);
+            await elasticService.SendBulkToStorageAsync(messages);
+            messages.Clear();
         }
-        
-        journal.Close();
+
+        textReader.Close();
 
         logger.LogInfo($"[{baseRecord.Name}] Найдено {counter} записей");
-    }
-
-    private async Task SendBulkToStorageAsync(List<ElasticRecord> messages, string index)
-    {
-        try
-        {
-            await elasticService.BulkPostAsync(converter.ElasticRecordsToElasticMessage(messages, index));
-        }
-        catch (Exception e)
-        {
-            logger.LogError($"Ошибка записи пачки в Elastic: {e.Message}");
-            throw;
-        }
-
-        messages.Clear();
     }
 
     private string PeriodFromFileName(string fileName)
@@ -154,13 +134,6 @@ public class ProcessBaseDirectoryService
         var file = Path.GetFileNameWithoutExtension(fileName);
         string result = $"{file[0..4]}-{file[4..6]}-{file[6..8]}";
         return result;
-    }
-
-    private void ManageProcessedFile(string fileName)
-    {
-        logger.LogInfo($"[{baseRecord.Name}] Перемещение файла \"{fileName}\"");
-        var directory = Path.Combine(config.Files.BackupDirectory, baseRecord.Name);
-        FileHelper.MoveFile(fileName, directory);
     }
 
 }

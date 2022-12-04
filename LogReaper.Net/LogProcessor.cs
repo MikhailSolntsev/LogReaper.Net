@@ -1,11 +1,6 @@
 ﻿using LogReaper.Net.Configuration;
 using LogReaper.Net.Contracts;
 using LogReaper.Net.Dto;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LogReaper.Net
 {
@@ -30,7 +25,7 @@ namespace LogReaper.Net
         public async Task ProcessLogsAsync()
         {
             
-            IList<BaseListRecord> baseList = getBaseListService.Read(config.Files.LogDirectory);
+            var baseList = getBaseListService.Read(config.Files.LogDirectory);
 
             foreach (BaseListRecord record in baseList)
             {
