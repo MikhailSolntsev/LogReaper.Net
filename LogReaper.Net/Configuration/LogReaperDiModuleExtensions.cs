@@ -6,11 +6,6 @@ namespace LogReaper.Net.Configuration
 {
     public static class LogReaperDiModuleExtensions
     {
-        public static void RegisterLogger(this ContainerBuilder builder)
-        {
-            LocalLogger logger = new();
-            builder.RegisterInstance(logger).As<ILocalLogger>().SingleInstance();
-        }
 
         public static void RegisterConfig(this ContainerBuilder builder, LogReaperConfig config)
         {
@@ -36,7 +31,7 @@ namespace LogReaper.Net.Configuration
 
         public static void RegisterBackupService(this ContainerBuilder builder)
         {
-            builder.RegisterType<BackupProcessedFileService>().AsSelf().SingleInstance();
+            builder.RegisterType<BackupProcessedFileService>().As<IBackupProcessedFileService>().SingleInstance();
         }
     }
 }

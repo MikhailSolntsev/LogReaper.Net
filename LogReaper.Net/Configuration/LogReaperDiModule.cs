@@ -7,9 +7,13 @@ namespace LogReaper.Net.Configuration
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<LocalLogger>()
+                .As<ILocalLogger>()
+                .SingleInstance();
+
             builder.RegisterType<GetBaseListService>()
-            .As<IGetBaseListService>()
-            .SingleInstance();
+                .As<IGetBaseListService>()
+                .SingleInstance();
 
             builder.RegisterType<ConvertRecordService>()
                 .AsSelf()

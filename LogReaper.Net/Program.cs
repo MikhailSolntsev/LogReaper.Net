@@ -8,16 +8,12 @@ namespace LogReaper.Net;
 
 internal class Program
 {
-    private static string rootFolder;
-
     static async Task Main(string[] args)
     {
         if (args.Length == 0)
         {
             throw new ArgumentException("Не указан каталог с настройками приложения", nameof(args));
         }
-
-        rootFolder = args[0];
 
         var timeTracker = new TimeTracker();
         timeTracker.StartTracking();
@@ -27,7 +23,6 @@ internal class Program
         var builder = new ContainerBuilder();
 
         builder.RegisterModule<LogReaperDiModule>();
-        builder.RegisterLogger();
         builder.RegisterConfig(config);
         builder.RegisterHttpClient();
         builder.RegisterBackupService();

@@ -5,7 +5,7 @@ using LogReaper.Net.Exceptions;
 
 namespace LogReaper.Net
 {
-    public class BackupProcessedFileService
+    public class BackupProcessedFileService : IBackupProcessedFileService
     {
         private readonly ILocalLogger logger;
         private readonly LogReaperConfig config;

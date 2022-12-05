@@ -12,7 +12,7 @@ public class ProcessBaseDirectoryService
     private readonly ConvertRecordService converter;
     private readonly ISendElasticMessageService elasticService;
     private readonly IRepresentFieldsService representFieldsService;
-    private readonly BackupProcessedFileService backupProcessedFileService;
+    private readonly IBackupProcessedFileService backupProcessedFileService;
 
     private OdinAssLogDictionary dictionary = null!;
 
@@ -24,7 +24,7 @@ public class ProcessBaseDirectoryService
         ILocalLogger logger,
         ISendElasticMessageService elasticService,
         IRepresentFieldsService representFieldsService,
-        BackupProcessedFileService backupProcessedFileService)
+        IBackupProcessedFileService backupProcessedFileService)
     {
         this.config = config;
         this.converter = converter;
