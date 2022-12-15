@@ -1,6 +1,8 @@
-﻿
-using LogReaper.Net.Models;
+﻿using Autofac;
+using LogReaper.Net.Configuration;
+using LogReaper.Net.Contracts;
 using LogReaper.Net.Service;
+using Microsoft.Extensions.Configuration;
 
 namespace LogReaper.Net;
 
@@ -10,38 +12,49 @@ internal class Program
     {
         if (args.Length == 0)
         {
-            Console.WriteLine("No parameters was set");
-            return;
+            throw new ArgumentException("Не указан каталог с настройками приложения", nameof(args));
         }
 
-        TimeTracker timeTracker = new TimeTracker();
+        var timeTracker = new TimeTracker();
         timeTracker.StartTracking();
 
-        LocalLogger logger = new();
+        var config = ReadConfiguration(args[0]);
 
-        Configuration config = ConfigReader.ReadConfig(args[0], logger);
+        var builder = new ContainerBuilder();
 
-        var baseList = BaseListReader.Read(config.LogDirectory, logger);
+        builder.RegisterModule<LogReaperDiModule>();
+        builder.RegisterConfig(config);
+        builder.RegisterHttpClient();
+        builder.RegisterBackupService();
 
-        var converter = new RecordConverter(logger);
-        converter.ReadRepresentations(args[0]);
-        converter.ReadFilter(args[0]);
+        var container = builder.Build();
 
-        logger.LogInfo("Обработка журналов регистрации баз");
+        container.Resolve<IRepresentFieldsService>().ReadRepresentationsFromDirectory(config.RootDirectory);
+        container.Resolve<IFilterRecordsService>().ReadFiltersFromDirectory(config.RootDirectory);
 
-        foreach (BaseListRecord record in baseList)
-        {
-            if (!config.Bases.Contains(record.Name))
-            {
-                logger.LogInfo($"База {record.Name} пропущена, т.к. не задана в настройках");
-                continue;
-            }
+        var processor = container.Resolve<LogProcessor>();
 
-            LogReader reader = new (config, record, converter, logger);
-            await reader.ReadDirectoryAsync();
-        };
+        await processor.ProcessLogsAsync();
 
         timeTracker.StopTracking();
         
     }
+
+    private static LogReaperConfig ReadConfiguration(string rootFolder)
+    {
+        IConfiguration configuration = new ConfigurationBuilder()
+                    .AddJsonFile(Path.Combine(rootFolder, "appsettings.json"), true, true)
+                    .Build();
+
+        var config = configuration.Get<LogReaperConfig>();
+        if (config is null)
+        {
+            throw new ArgumentException("Файл конфигурации 'appsettings.json' отсутствует или не не заполнен");
+        }
+        config.RootDirectory = rootFolder;
+
+        return config;
+    }
+
+
 }

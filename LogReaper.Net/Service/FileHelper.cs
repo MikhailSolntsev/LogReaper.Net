@@ -5,7 +5,7 @@ namespace LogReaper.Net.Service;
 
 public static class FileHelper
 {
-    public const string logDirectory = "1Cv8Log\\";
+    public const string logDirectory = "1Cv8Log";
 
     public static List<string> GetUnlockedFiles(string subdirectry)
     {
@@ -40,27 +40,5 @@ public static class FileHelper
         return false;
     }
 
-    public static void MoveFile(string fileName, string directory)
-    {
-        var file = new FileInfo(fileName);
-        var dir = new DirectoryInfo(directory);
-
-        if (!dir.Exists)
-        {
-            dir.Create();
-            if (!dir.Exists)
-            {
-                throw new DirectoryCreationException($"Не удалось создать каталог \"{directory}\"");
-            }
-        }
-
-        string newFileName = Path.Combine(directory, file.Name);
-        file.MoveTo(newFileName);
-
-        var dest = new FileInfo(newFileName);
-        if (!dest.Exists)
-        {
-            throw new FileRenameException($"Ошибка перемещения файла в \"{newFileName}\"");
-        }
-    }
+    
 }
