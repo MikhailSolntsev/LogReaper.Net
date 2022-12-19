@@ -18,47 +18,61 @@ namespace LogReaper.Net
 
         public void BackupProcessedFile(string fileName, BaseListRecord baseRecord)
         {
+            string directory = string.Empty;
             try
             {
                 logger.LogInfo($"[{baseRecord.Name}] Перемещение файла \"{fileName}\"");
-                var directory = Path.Combine(config.Files.BackupDirectory, baseRecord.Name);
-                MoveFile(fileName, directory);
+                directory = Path.Combine(config.Files.BackupDirectory, baseRecord.Name);
+                MoveFile(fileName, directory, baseRecord);
             }
             catch (DirectoryCreationException e)
             {
-                logger.LogError($"[{baseRecord.Name}] Ошибка создания каталога: {e.Message}");
+                logger.LogError($"[{baseRecord.Name}] Ошибка создания каталога \"{directory}\": {e.Message}");
             }
             catch (FileRenameException e)
             {
-                logger.LogError($"[{baseRecord.Name}] Ошибка переименования файла: {e.Message}");
+                logger.LogError($"[{baseRecord.Name}] Ошибка переименования файла \"{fileName}\" в каталог \"{directory}\": {e.Message}");
             }
             catch (Exception e)
             {
-                logger.LogError($"[{baseRecord.Name}] Ошибка перемещения файла $fileName: ${e.Message}");
+                logger.LogError($"[{baseRecord.Name}] Ошибка перемещения файла \"{fileName}\" в каталог \"{directory}\": {e.Message}");
             }
         }
 
-        private void MoveFile(string fileName, string directory)
+        private void MoveFile(string fileName, string directory, BaseListRecord baseRecord)
         {
-            var file = new FileInfo(fileName);
-            var dir = new DirectoryInfo(directory);
+            var fileInfo = new FileInfo(fileName);
+            if (!fileInfo.Exists)
+            { 
+                return;
+            }
 
-            if (!dir.Exists)
+            var directoryInfo = new DirectoryInfo(directory);
+
+            if (!directoryInfo.Exists)
             {
-                dir.Create();
-                if (!dir.Exists)
+                directoryInfo.Create();
+                if (!directoryInfo.Exists)
                 {
                     throw new DirectoryCreationException($"Не удалось создать каталог \"{directory}\"");
                 }
             }
 
-            string newFileName = Path.Combine(directory, file.Name);
-            file.MoveTo(newFileName);
-
-            var dest = new FileInfo(newFileName);
-            if (!dest.Exists)
+            string newFileName = Path.Combine(directory, fileInfo.Name);
+            try
             {
-                throw new FileRenameException($"Ошибка перемещения файла в \"{newFileName}\"");
+                fileInfo.MoveTo(newFileName);
+            }
+            catch(Exception e)
+            {
+                logger.LogError($"[{baseRecord.Name}] Ошибка переименования файла \"{fileName}\" в каталог \"{newFileName}\": {e.Message}");
+                throw;
+            }
+
+            var destinationFileInfo = new FileInfo(newFileName);
+            if (!destinationFileInfo.Exists)
+            {
+                throw new FileRenameException($"Ошибка перемещения файла \"{fileName}\" в \"{newFileName}\"");
             }
         }
 

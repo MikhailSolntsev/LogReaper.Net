@@ -17,4 +17,5 @@ public sealed class ElasticRecord
     public string Representation { get; set; }
     public string Data { get; set; }
     public uint Session { get; set; }
+    public string Infobase { get; set; }
 }

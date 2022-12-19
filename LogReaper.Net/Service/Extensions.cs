@@ -11,9 +11,9 @@ public static class Extensions
         tdatetime %= 100000000;
         long day = tdatetime / 1000000;
         tdatetime %= 1000000;
-        long hour = tdatetime / 1000000;
+        long hour = tdatetime / 10000;
         tdatetime %= 10000;
-        long min = tdatetime / 1000000;
+        long min = tdatetime / 100;
         tdatetime %= 100;
         long sec = tdatetime;
         return $"{year:0000}-{month:00}-{day:00}T{hour:00}:{min:00}:{sec:00}";

@@ -20,4 +20,16 @@ public class ExtensionTests
     {
         source.ToTransactionNumber().Should().Be(expects);
     }
+
+    [Theory(DisplayName = "")]
+    [InlineData(20221219160942, "2022-12-19T16:09:42")]
+    [InlineData(20221120030942, "2022-11-20T03:09:42")]
+    public void LongToDateTimeString_Should_Return_Correct_DateTime(long source, string expects)
+    {
+        // act
+        var result = source.ToDateTimeString();
+
+        // assert
+        result.Should().Be(expects);
+    }
 }

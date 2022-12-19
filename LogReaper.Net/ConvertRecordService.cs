@@ -52,6 +52,7 @@ public class ConvertRecordService
         elkRecord.Representation = logRecord.Representation;
         elkRecord.Data = logRecord.Data;
         elkRecord.Session = logRecord.Session;
+        elkRecord.Infobase = logRecord.Infobase;
 
         return elkRecord;
     }
@@ -78,6 +79,7 @@ public class ConvertRecordService
             ["transactionNumber"] = record.TransactionNumber.CutQuotes(),
             ["username"] = record.User.CutQuotes(),
             ["instance"] = record.Computer.CutQuotes(),
+            ["infobase"] = record.Infobase.CutQuotes(),
             ["useragent"] = record.Application,
             ["servername"] = record.Server.CutQuotes(),
             ["event"] = record.Event,
@@ -86,7 +88,7 @@ public class ConvertRecordService
             ["metadata"] = record.Metadata.CutQuotes(),
             ["representation"] = record.Representation.CutQuotes(),
             ["data"] = record.Data,
-            ["timestamp"] = DateTime.Now.ToString("YYYY-MM-dd'T'HH:mm:ss.SSS"),
+            ["timestamp"] = DateTime.Now.ToString("yyyy-MM-dd'T'HH:mm:ss.fff"),
             ["session"] = record.Session.ToString()
         };
         

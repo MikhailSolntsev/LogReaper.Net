@@ -1,6 +1,7 @@
 ﻿using LogReaper.Net.Dto;
 using LogReaper.Net.Enums;
 using LogReaper.Net.Service;
+using System.IO;
 
 namespace LogReaper.Net
 {
@@ -12,9 +13,9 @@ namespace LogReaper.Net
         {
             var dictionaryFileName = Path.Combine(directory, fileName);
 
-            var fileStream = File.OpenRead(dictionaryFileName);
-            var fileReader = new StreamReader(fileStream);
-
+            using var fileStream = new FileStream(dictionaryFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            using var fileReader = new StreamReader(fileStream);
+            
             var readMachine = new ReadAnyOdinAssFileService(fileReader);
 
             OdinAssLogDictionary dictionary = new();

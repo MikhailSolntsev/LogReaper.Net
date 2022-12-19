@@ -32,6 +32,7 @@ public class ProcessBaseDirectoryService
         this.elasticService = elasticService;
         this.representFieldsService = representFieldsService;
         this.backupProcessedFileService = backupProcessedFileService;
+        baseRecord = new();
     }
 
     public async Task ProcessDirectoryAsync(BaseListRecord baseRecord)
@@ -86,14 +87,15 @@ public class ProcessBaseDirectoryService
         var messages = new List<ElasticRecord>();
         
         var period = PeriodFromFileName(fileName);
-        var index = $"{baseRecord.Name}.log-{period}";
+        var index = $"onec-{baseRecord.Name}.log-{period}";
         elasticService.UseDefaultIndex(index);
 
         var counter = 0;
 
         var readLogFileService = new ReadOdinAssLogFileService();
 
-        var textReader = new StreamReader(File.OpenRead(fileName));
+        using var fileStream = File.OpenRead(fileName);
+        using var textReader = new StreamReader(fileStream);
         readLogFileService.Open(textReader);
 
         while (!readLogFileService.EOF())
@@ -102,6 +104,7 @@ public class ProcessBaseDirectoryService
             
             if (record is not null)
             {
+                record.Infobase = baseRecord.Name;
                 ElasticRecord? elkRecord = converter.LogRecordToElasticRecord(record, dictionary);
                 if (elkRecord is not null)
                 {
@@ -125,6 +128,7 @@ public class ProcessBaseDirectoryService
         }
 
         textReader.Close();
+        fileStream.Close();
 
         logger.LogInfo($"[{baseRecord.Name}] Найдено {counter} записей");
     }

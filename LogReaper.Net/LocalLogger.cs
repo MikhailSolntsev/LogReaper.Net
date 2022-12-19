@@ -21,7 +21,7 @@ public class LocalLogger : ILocalLogger
     }
     public void LogDebug(string? message)
     {
-        Console.WriteLine($"debug {message}");
+        //Console.WriteLine($"debug {message}");
     }
     public void LogBaseInfo(string? message)
     {

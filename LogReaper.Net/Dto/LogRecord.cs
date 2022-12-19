@@ -19,6 +19,8 @@ public class LogRecord
     public string Representation { get; set; }           // 13
     public uint Server { get; set; }                     // 14
     public uint Session { get; set; }                    // 17
+
+    public string Infobase { get; set; }
 }
 
 

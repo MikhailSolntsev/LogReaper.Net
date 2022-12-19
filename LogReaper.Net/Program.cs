@@ -26,6 +26,7 @@ internal class Program
         builder.RegisterConfig(config);
         builder.RegisterHttpClient();
         builder.RegisterBackupService();
+        builder.RegisterElasticService();
 
         var container = builder.Build();
 
