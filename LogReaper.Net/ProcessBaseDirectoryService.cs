@@ -98,6 +98,8 @@ public class ProcessBaseDirectoryService
         using var textReader = new StreamReader(fileStream);
         readLogFileService.Open(textReader);
 
+        var tasks = new List<Task>();
+
         while (!readLogFileService.EOF())
         {
             LogRecord? record = readLogFileService.ReadNextRecord();
@@ -116,7 +118,10 @@ public class ProcessBaseDirectoryService
             {
                 counter += messages.Count;
                 await elasticService.SendBulkToStorageAsync(messages);
-                messages.Clear();
+                //var task = elasticService.SendBulkToStorageAsync(messages);
+                //tasks.Add(task);
+
+                messages = new List<ElasticRecord>();
             }
         }
 
@@ -124,11 +129,16 @@ public class ProcessBaseDirectoryService
         {
             counter += messages.Count;
             await elasticService.SendBulkToStorageAsync(messages);
-            messages.Clear();
+            //var task = elasticService.SendBulkToStorageAsync(messages);
+            //tasks.Add(task);
+
+            messages = new List<ElasticRecord>();
         }
 
         textReader.Close();
         fileStream.Close();
+
+        await Task.WhenAll(tasks);//.Wait();
 
         logger.LogInfo($"[{baseRecord.Name}] Найдено {counter} записей");
     }

@@ -11,4 +11,5 @@ public interface ILocalLogger
     void LogBaseError(string? message);
     void LogBaseInfo(string? message);
     void LogBaseDebug(string? message);
+    void FileLog(string data);
 }

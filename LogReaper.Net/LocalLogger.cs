@@ -1,10 +1,18 @@
-﻿using LogReaper.Net.Contracts;
+﻿using LogReaper.Net.Configuration;
+using LogReaper.Net.Contracts;
 using LogReaper.Net.Dto;
 
 namespace LogReaper.Net;
 
 public class LocalLogger : ILocalLogger
 {
+    private readonly LogReaperConfig config;
+
+    public LocalLogger(LogReaperConfig config)
+    {
+        this.config = config;
+    }
+
     private BaseListRecord baseRecord;
 
     public void UseCurrentBase(BaseListRecord baseRecord)
@@ -34,5 +42,12 @@ public class LocalLogger : ILocalLogger
     public void LogBaseDebug(string? message)
     {
         Console.WriteLine($"Info [{baseRecord?.Name}] {message}");
+    }
+
+    public void FileLog(string data)
+    {
+        var fileName = DateTimeOffset.UtcNow.ToString("yyyy-MM-dd HH-mm-ss-fff.log");
+        var fullFileName = Path.Combine(config.RootDirectory, fileName);
+        File.WriteAllText(fullFileName, data);
     }
 }
